@@ -1,0 +1,155 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  BUILDER_ADMIN
+  COORDINATOR
+  SUPERINTENDENT
+  VENDOR
+  HOMEOWNER
+}
+
+model User {
+  id          String      @id @default(cuid())
+  clerkUserId String      @unique
+  email       String      @unique
+  name        String
+  role        UserRole
+  phone       String?
+  builderId   String?
+  homeownerId String?     @unique
+  vendorId    String?     @unique
+  builder     Builder?    @relation(fields: [builderId], references: [id])
+  homeowner   Homeowner?  @relation(fields: [homeownerId], references: [id])
+  vendor      Vendor?     @relation(fields: [vendorId], references: [id])
+  createdAt   DateTime    @default(now())
+}
+
+model Builder {
+  id          String      @id @default(cuid())
+  name        String
+  communities Community[]
+  homes       Home[]
+  vendors     Vendor[]
+  claims      Claim[]
+  users       User[]
+  createdAt   DateTime    @default(now())
+}
+
+model Community {
+  id        String   @id @default(cuid())
+  name      String
+  builderId String
+  builder   Builder  @relation(fields: [builderId], references: [id])
+  homes     Home[]
+  createdAt DateTime @default(now())
+}
+
+model Home {
+  id          String      @id @default(cuid())
+  address     String
+  lotNumber   String?
+  closeDate   DateTime
+  warrantyEnd DateTime?
+  builderId   String
+  communityId String
+  homeownerId String?
+  builder     Builder     @relation(fields: [builderId], references: [id])
+  community   Community   @relation(fields: [communityId], references: [id])
+  homeowner   Homeowner?  @relation(fields: [homeownerId], references: [id])
+  claims      Claim[]
+  createdAt   DateTime    @default(now())
+}
+
+model Homeowner {
+  id        String   @id @default(cuid())
+  name      String
+  email     String?  @unique
+  phone     String?
+  homes     Home[]
+  claims    Claim[]
+  user      User?
+  createdAt DateTime @default(now())
+}
+
+model Vendor {
+  id         String      @id @default(cuid())
+  name       String
+  trade      String
+  builderId  String
+  builder    Builder     @relation(fields: [builderId], references: [id])
+  workOrders WorkOrder[]
+  claims     Claim[]
+  user       User?
+  createdAt  DateTime    @default(now())
+}
+
+model Claim {
+  id              String               @id @default(cuid())
+  claimNumber     String               @unique
+  builderId       String
+  homeId          String
+  homeownerId     String?
+  vendorId        String?
+  category        String
+  description     String
+  priority        String
+  status          String
+  preferredAccess String?
+  builder         Builder              @relation(fields: [builderId], references: [id])
+  home            Home                 @relation(fields: [homeId], references: [id])
+  homeowner       Homeowner?           @relation(fields: [homeownerId], references: [id])
+  vendor          Vendor?              @relation(fields: [vendorId], references: [id])
+  workOrders      WorkOrder[]
+  attachments     ClaimAttachment[]
+  notes           ClaimNote[]
+  statusHistory   ClaimStatusHistory[]
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+}
+
+model WorkOrder {
+  id          String   @id @default(cuid())
+  claimId     String
+  vendorId    String?
+  status      String
+  scheduledAt DateTime?
+  notes       String?
+  claim       Claim    @relation(fields: [claimId], references: [id])
+  vendor      Vendor?  @relation(fields: [vendorId], references: [id])
+  createdAt   DateTime @default(now())
+}
+
+model ClaimAttachment {
+  id        String   @id @default(cuid())
+  claimId   String
+  url       String
+  kind      String
+  fileName  String?
+  claim     Claim    @relation(fields: [claimId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model ClaimNote {
+  id         String   @id @default(cuid())
+  claimId    String
+  body       String
+  isInternal Boolean  @default(true)
+  claim      Claim    @relation(fields: [claimId], references: [id])
+  createdAt  DateTime @default(now())
+}
+
+model ClaimStatusHistory {
+  id        String   @id @default(cuid())
+  claimId   String
+  status    String
+  note      String?
+  claim     Claim    @relation(fields: [claimId], references: [id])
+  createdAt DateTime @default(now())
+}
