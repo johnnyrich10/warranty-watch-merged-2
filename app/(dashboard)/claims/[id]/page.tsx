@@ -18,7 +18,7 @@ export default async function ClaimDetailPage({ params }: { params: Promise<{ id
     },
   });
   if (!claim) notFound();
-  const allowed = ['BUILDER_ADMIN', 'COORDINATOR', 'SUPERINTENDENT'].includes(user.role) || (user.role === 'HOMEOWNER' && claim.homeownerId === user.homeownerId) || (user.role === 'VENDOR' && (claim.vendorId === user.vendorId || claim.workOrders.some((wo) => wo.vendorId === user.vendorId)));
+  const allowed = ['BUILDER_ADMIN', 'COORDINATOR', 'SUPERINTENDENT'].includes(user.role) || (user.role === 'HOMEOWNER' && claim.homeownerId === user.homeownerId) || (user.role === 'VENDOR' && (claim.vendorId === user.vendorId || claim.workOrders.some((wo: any) => wo.vendorId === user.vendorId)));
   if (!allowed) notFound();
   return <ClaimDetailView claim={claim} user={user} />;
 }
