@@ -9,7 +9,7 @@ export async function GET(_: Request, { params }: { params: Promise<{ id: string
   const user = await requireAppUser();
   const claim = await db.claim.findUnique({ where: { id }, include: { home: { include: { homeowner: true, community: true } }, vendor: true, workOrders: { include: { vendor: true } }, statusHistory: true, notes: true, attachments: true } });
   if (!claim) return NextResponse.json({ message: 'Not found' }, { status: 404 });
-  const allowed = ['BUILDER_ADMIN', 'COORDINATOR', 'SUPERINTENDENT'].includes(user.role) || (user.role === 'HOMEOWNER' && claim.homeownerId === user.homeownerId) || (user.role === 'VENDOR' && (claim.vendorId === user.vendorId || claim.workOrders.some((wo) => wo.vendorId === user.vendorId)));
+  const allowed = ['BUILDER_ADMIN', 'COORDINATOR', 'SUPERINTENDENT'].includes(user.role) || (user.role === 'HOMEOWNER' && claim.homeownerId === user.homeownerId) || (user.role === 'VENDOR' && (claim.vendorId === user.vendorId || claim.workOrders.some((wo: any) => wo.vendorId === user.vendorId)));
   if (!allowed) return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
   return NextResponse.json(claim);
 }
