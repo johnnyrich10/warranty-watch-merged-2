@@ -1,12 +1,12 @@
 import { createUploadthing, type FileRouter } from 'uploadthing/next';
 import { auth } from '@clerk/nextjs/server';
 import { db } from '@/lib/db';
-
+import { z } from "zod";
 const f = createUploadthing();
 
 export const ourFileRouter = {
   claimImage: f({ image: { maxFileSize: '8MB', maxFileCount: 6 } })
-    .input(({ z }) => z.object({ claimId: z.string().min(1) }))
+   .input(z.object({ claimId: z.string().min(1) }))
     .middleware(async ({ input }) => {
       const { userId } = await auth();
       if (!userId) throw new Error('Unauthorized');
