@@ -14,8 +14,14 @@ export const ourFileRouter = {
       if (!user) throw new Error('Unauthorized');
       const claim = await db.claim.findUnique({ where: { id: input.claimId }, include: { workOrders: true } });
       if (!claim) throw new Error('Claim not found');
-      const allowed = ['BUILDER_ADMIN', 'COORDINATOR', 'SUPERINTENDENT'].includes(user.role) || (user.role === 'HOMEOWNER' && claim.homeownerId === user.homeownerId) || (user.role === 'VENDOR' && (claim.vendorId === user.vendorId || claim.workOrders.some((wo: any) => wo.vendorId === user.vendorId)));
-      if (!allowed) throw new Error('Forbidden');
+const allowed =
+  ['BUILDER_ADMIN', 'COORDINATOR', 'SUPERINTENDENT'].includes(user.role) ||
+  (user.role === 'HOMEOWNER' && claim.homeownerId === user.homeownerId) ||
+  (user.role === 'VENDOR' &&
+    (claim.vendorId === user.vendorId ||
+      claim.workOrders.some((wo: any) => wo.vendorId === user.vendorId)));
+
+if (!allowed) throw new Error('Forbidden');
       return { userId, claimId: input.claimId };
     })
     .onUploadComplete(async ({ metadata, file }) => {
