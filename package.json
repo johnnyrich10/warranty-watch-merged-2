@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
   "dev": "next dev",
-  "build": "next build",
+  "build": "npx prisma generate && next build",
   "start": "next start",
   "lint": "next lint",
   "postinstall": "prisma generate",
@@ -13,19 +13,20 @@
   "prisma:seed": "tsx prisma/seed.ts"
 }
   },
-  "dependencies": {
-    "@clerk/nextjs": "latest",
-    "@prisma/client": "latest",
-    "@uploadthing/react": "latest",
-    "lucide-react": "latest",
-    "next": "latest",
-    "react": "latest",
-    "react-dom": "latest",
-    "resend": "latest",
-    "twilio": "latest",
-    "uploadthing": "latest",
-    "zod": "latest"
-  },
+"dependencies": {
+  "@clerk/nextjs": "latest",
+  "@prisma/client": "latest",
+  "@uploadthing/react": "latest",
+  "lucide-react": "latest",
+  "next": "latest",
+  "prisma": "latest",
+  "react": "latest",
+  "react-dom": "latest",
+  "resend": "latest",
+  "twilio": "latest",
+  "uploadthing": "latest",
+  "zod": "latest"
+}
   "devDependencies": {
     "@types/node": "latest",
     "@types/react": "latest",
