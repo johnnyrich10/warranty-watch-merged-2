@@ -10,9 +10,8 @@ export async function DELETE(_: Request, { params }: { params: Promise<{ id: str
   const { db } = await import('@/lib/db');
 
   if (!userId) return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
-
-  const user = await db.user.findUnique({ where: { clerkUserId: userId } });
-  if (!user) return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+  // rest of your code...
+}
 
   const attachment = await db.claimAttachment.findUnique({
     where: { id },
