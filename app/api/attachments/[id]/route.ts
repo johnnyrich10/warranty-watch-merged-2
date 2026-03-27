@@ -1,12 +1,13 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
-import { db } from '@/lib/db';
+
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
 export async function DELETE(_: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const { userId } = await auth();
+  const { db } = await import('@/lib/db');
   if (!userId) return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
   const user = await db.user.findUnique({ where: { clerkUserId: userId } });
   if (!user) return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
