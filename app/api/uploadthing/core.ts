@@ -19,7 +19,7 @@ const allowed =
   (user.role === 'HOMEOWNER' && claim.homeownerId === user.homeownerId) ||
   (user.role === 'VENDOR' &&
     (claim.vendorId === user.vendorId ||
-      claim.workOrders.some((wo: any) => wo.vendorId === user.vendorId)));
+      (claim.workOrders as any[]).some((wo) => wo.vendorId === user.vendorId)));
 
 if (!allowed) throw new Error('Forbidden');
       return { userId, claimId: input.claimId };
